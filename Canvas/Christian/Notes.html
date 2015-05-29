@@ -1,0 +1,139 @@
+﻿<!--
+    sources: https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes
+             https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Basic_animations
+             http://diveintohtml5.info/canvas.html
+    -->
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script type="text/javascript">
+
+        var myBall = null;
+        var minX = 0;
+        var minY = 0;
+        var maxX = 500;
+        var maxY = 500;
+
+        function ball(context)
+        {
+            self = this;
+            self.x = 0;
+            self.y = 0;
+            self.xDirection = 1;
+            self.yDirection = 1;
+            self.width = 25;
+            self.color = "rgb(0, 0, 255)";
+        }
+
+        function beginDraw()
+        {
+            //TODO: set up any state before main render loop
+
+            //add key press event listeners
+            window.addEventListener("keypress", keyPressed);
+            document.getElementById("canvas").addEventListener("click", canvasClicked, false);
+
+            var canvas = document.getElementById("canvas");
+            var context = canvas.getContext("2d");
+            myBall = new ball(context);
+
+            //request repaint
+            window.requestAnimationFrame(renderLoop);
+        }
+
+        function renderLoop()
+        {
+            //get reference to drawing canvas
+            var canvas = document.getElementById("canvas");
+            var context = canvas.getContext("2d");
+
+            //clear canvas
+            context.clearRect(0, 0, 500, 500);
+
+            //draw ball
+            context.fillStyle = myBall.color;
+            context.beginPath();
+            context.arc(myBall.x, myBall.y, myBall.width, 0, Math.PI * 2, true);
+            context.fill();
+
+            //check ball boundaries
+            if (myBall.x < minX)
+            {
+                myBall.xDirection = 1;
+            }
+            else if (myBall.x > maxX)
+            {
+                myBall.xDirection = -1;
+            }
+            if (myBall.y < minY)
+            {
+                myBall.yDirection = 1;
+            }
+            else if (myBall.y > maxY)
+            {
+                myBall.yDirection = -1;
+            }
+
+            //move ball
+            myBall.x += myBall.xDirection;
+            myBall.y += myBall.yDirection;
+
+            //request repaint
+            window.requestAnimationFrame(renderLoop);
+        }
+
+        function keyPressed(evt)
+        {
+            if (evt.charCode == 65 || evt.charCode == 97) // 'A' or 'a'
+            {
+                //change color of our ball
+                if(myBall.color == "rgb(0, 0, 255)")
+                {
+                    myBall.color = "rgb(255, 0, 255)";
+                }
+                else
+                {
+                    myBall.color = "rgb(0, 0, 255)";
+                }
+            }
+        }
+
+        function canvasClicked(evt)
+        {
+            //move the ball
+            myBall.x = evt.pageX;
+            myBall.y = evt.pageY;
+        }
+
+        function basicShapes()
+        {
+            var canvas = document.getElementById("canvas");
+            var context = canvas.getContext("2d");
+
+            //filled rectangle
+            context.fillStyle = "rgb(255, 0, 0)";
+            context.fillRect(0, 0, 50, 50);
+
+            //outlined rectangle
+            context.strokeStyle = "rgb(0, 255, 0)";
+            context.strokeRect(50, 50, 50, 50);
+
+            //circle
+            context.strokeStyle = "rgb(0, 0, 255)";
+            context.beginPath();
+            context.arc(150, 150, 50, 0, Math.PI * 2, true);
+            context.stroke();
+
+            //line
+            context.moveTo(10, 10);
+            context.lineTo(10, 100);
+            context.stroke();
+        }
+    </script>
+</head>
+<body onload="beginDraw();">
+    <canvas id="canvas" width="500" height="500"></canvas>
+</body>
+</html>

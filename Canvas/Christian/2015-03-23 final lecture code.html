@@ -1,0 +1,157 @@
+﻿<!-- 
+    sources: https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_shapes
+             https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Basic_animations
+             http://diveintohtml5.info/canvas.html
+    -->
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script type="text/javascript">
+
+        var myBall = null;
+        var myBall2 = null;
+        var minX = 0;
+        var minY = 0;
+        var maxX = 500;
+        var maxY = 500;
+        var balls = Array();
+        var canvas = null; 
+        var context = null; 
+        function ball(context)
+        {
+            var self = this;
+            self.context = context;
+            self.x = 0;
+            self.y = 0;
+            self.xDirection = Math.random() * 10;
+            self.yDirection = Math.random() * 10;
+            self.width = 25;
+            self.color = "rgb(0, 0, 255)";
+
+            self.render = function()
+            {
+                self.context.fillStyle = self.color;
+                self.context.beginPath();
+                self.context.arc(self.x, self.y, self.width, 0, Math.PI * 2, true);
+                self.context.fill();
+            }
+
+            self.move = function()
+            {
+                self.x += self.xDirection;
+                self.y += self.yDirection;
+            }
+
+            self.checkBoundary = function()
+            {
+                //check ball boundaries
+                if (self.x - self.width < minX) {
+                    self.xDirection = Math.random() * 10;
+                }
+                else if (self.x + self.width > maxX) {
+                    self.xDirection = -1 * Math.random() * 10;
+                }
+                if (self.y - self.width < minY) {
+                    self.yDirection = Math.random() * 10;
+                }
+                else if (self.y + self.width > maxY) {
+                    self.yDirection = -1 * Math.random() * 10;
+                }
+            }
+        }
+
+        function beginDraw()
+        {
+            //TODO: set up any state before main render loop
+            
+            //add key press event listeners
+            window.addEventListener("keypress", keyPressed);
+            document.getElementById("canvas").addEventListener("click", canvasClicked, false);
+
+            canvas = document.getElementById("canvas");
+            context = canvas.getContext("2d");
+            myBall = new ball(context);
+            myBall2 = new ball(context);
+            myBall2.color = "rgb(0, 255, 255)";
+
+            //request repaint
+            window.requestAnimationFrame(renderLoop);
+        }
+
+        function renderLoop()
+        {
+
+            //clear canvas
+            context.clearRect(0, 0, maxX, maxY);
+
+            //check ball boundaries
+            for (var i = 0; i < balls.length; i++)
+            {
+                balls[i].checkBoundary();
+                balls[i].move();
+                balls[i].render();
+            }
+
+            //request repaint
+            window.requestAnimationFrame(renderLoop);
+        }
+
+        function keyPressed(evt)
+        {
+            if (evt.charCode == 65 || evt.charCode == 97) // 'A' or 'a'
+            {
+                //change color of our ball
+                if(myBall.color == "rgb(0, 0, 255)")
+                {
+                    myBall.color = "rgb(255, 0, 255)";
+                }
+                else
+                {
+                    myBall.color = "rgb(0, 0, 255)";
+                }
+            }
+        }
+
+        function canvasClicked(evt)
+        {
+            //add new ball
+            var newBall = new ball(context);
+            newBall.x = evt.pageX;
+            newBall.y = evt.pageY;
+            balls.push(newBall);
+        }
+
+        function basicShapes()
+        {
+            var canvas = document.getElementById("canvas");
+            var context = canvas.getContext("2d");
+
+            //filled rectangle
+            context.fillStyle = "rgb(255, 0, 0)";
+            context.fillRect(0, 0, 50, 50);
+
+            //outlined rectangle
+            context.strokeStyle = "rgb(0, 255, 0)";
+            context.strokeRect(50, 50, 50, 50);
+
+            //circle
+            context.strokeStyle = "rgb(0, 0, 255)";
+            context.beginPath();
+            context.arc(150, 150, 50, 0, Math.PI * 2, true);
+            context.stroke();
+
+            //line
+            context.moveTo(10, 10);
+            context.lineTo(10, 100);
+            context.stroke();
+        }
+    </script>
+</head>
+<body onload="beginDraw();">
+    <canvas id="canvas" width="500" height="500">
+
+    </canvas>
+</body>
+</html>

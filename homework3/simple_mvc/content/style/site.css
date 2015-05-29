@@ -1,0 +1,51 @@
+body
+{
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+a
+{
+    text-decoration: none;
+    font-weight:bold;
+    color: #2D6CFF;
+}
+
+a:visited
+{
+    color: #2D6CFF;    
+}
+
+a:hover
+{
+    text-decoration:underline;
+}
+
+caption
+{
+    font-size: 1.2em;
+    text-align:left;
+}
+
+
+table
+{
+    border-collapse: collapse;
+}
+
+td
+{
+    padding: 3px;
+    border: 1px solid black;
+}
+
+tr
+{
+    padding: 3px;
+    border: 1px solid black;
+    text-align: left;
+}
+
+.altRow
+{
+    /*background: #EFEFEF;*/
+}

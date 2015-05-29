@@ -1,0 +1,180 @@
+#header {
+    margin-left: auto;
+    margin-right: auto;
+    
+    background-color: rgba(0, 0, 0, 0.38);
+    padding: 5px;
+    border-color: #808080;
+    border-width: 6px;
+    border-style: outset;
+}
+
+#footer {
+    text-align: center;
+}
+
+body
+{
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 185px;
+    max-width: 1920px;
+    position: relative;
+    background-color: aqua;
+    padding: 0px 10px 10px 10px;
+}
+
+#header-title {
+    font-size: 50px;
+    text-align:center;
+}
+
+#header-subtitle {
+    font-size: 20px;
+    text-align: center;
+    font-style: italic;
+}
+
+#header-menu {
+    font-size: 20px;
+    text-align: center;
+    color: black;
+
+    background-color: rgba(143, 143, 143, 0.66);
+    padding: 3px;
+}
+
+#header-menu a {
+    color: #170c76;
+}
+
+#body {
+    text-align: center;
+    margin: 10px;
+}
+
+#body a {
+    color: #170c76;
+}
+
+#body textarea {
+    width: 512px;
+    height: 256px;
+}
+
+#body label {
+    font-weight: 800;
+}
+
+#body-index-body {
+    text-align: center;
+}
+
+#body-index-posts {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1024px;
+}
+
+.body-index-post {
+    min-width: 185px;
+    min-height: 185px;
+    max-width: 1024px;
+    font-size: 14px;
+    background-color: #b1b1b1;
+
+    padding: 5px 5px 5px 5px;
+    margin: 3px 3px 3px 3px;
+    box-shadow: 0px 0px 40px 40px aqua;
+    -webkit-box-shadow: 0px 0px 40px 40px aqua;
+    -moz-box-shadow: 0px 0px 40px 40px aqua;
+}
+
+.body-index-post h1 {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+}
+
+.body-index-post a {
+    color: #170c76;
+}
+
+.body-index-post h2 {
+    font-size: 18px;
+    font-style: italic;
+    font-weight: 100;
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+}
+
+.body-index-post p {
+    text-align: justify;
+}
+
+#body-read-all {
+    text-align: center;
+    min-width: 185px;
+
+    background-color: #b1b1b1;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#body-read-postdiv p {
+    font-size: 14px;
+}
+
+#body-read-all hr {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#body-read-postdiv a {
+    color: #170c76;
+}
+
+#body-read-title {
+    font-size: 30px;
+    font-weight: 800;
+}
+
+#body-read-author {
+    font-size: 20px;
+    font-weight: 100;
+    font-style: italic;
+}
+
+#body-read-commentdiv {
+    text-align: center;
+    min-width: 185px;
+
+    background-color: #b1b1b1;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#body-read-commentdiv a {
+    color: #170c76;
+}
+
+.body-read-comment {
+    min-width: 185px;
+
+    background-color: #a1a1a1;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.body-read-comment h4 {
+    font-size: 18px;
+    font-weight: 100;
+}
+
+.body-read-comment h5 {
+    font-size: 14px;
+    font-weight: 100;
+    font-style: italic;
+}
+

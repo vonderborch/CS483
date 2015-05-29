@@ -1,0 +1,304 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Christian Webber: Infection</title>
+
+    <script type="text/javascript">
+        // main graphics stuffs
+        var stage = null;
+        var graphics = null;
+        var stageMinX = 0;
+        var stageMinY = 0;
+        var stageMaxX = 500;
+        var stageMaxY = 500;
+
+        // globals
+        var state = 0; // 0 = main menu, 1 = game
+        var keyUp = false;
+        var keyDown = false;
+        var keyLeft = false;
+        var keyRight = false;
+        var clickX = 0;
+        var clickY = 0;
+        var mousepressed = false;
+
+        var flags = Array();
+        var cells = Array();
+        var viruses = Array();
+        var buttons = Array();
+        var txts = Array();
+
+        function btn(graphics, id, x, y, width, height, font, text, color, presscolor) {
+            var self = this;
+            self.ID = id;
+            self.X = x;
+            self.Y = y;
+            self.Width = width;
+            self.Height = height;
+            self.Font = font;
+            self.Text = text;
+            self.Color = color;
+            self.PressedColor = presscolor;
+            self.Graphics = graphics;
+            self.Pressed = false;
+            self.Released = false;
+
+            self.Draw = function () {
+                self.Graphics.font = self.Font;
+                if (self.Pressed == true) {
+                    self.Graphics.fillStyle = self.PressedColor;
+                }
+                else {
+                    self.Graphics.fillStyle = self.Color;
+                }
+                self.Graphics.fillText(self.Text, self.X, self.Y);
+            }
+
+            self.Collision = function () {
+                return (self.X < clickX && self.Y < clickY &&
+                        self.X + self.Width > clickX &&
+                        self.Y + self.Height > clickY);
+            }
+
+            self.Update = function () {
+                self.Released = false;
+                if (mousepressed == true) {
+                    if (self.Collision()) {
+                        self.Pressed = true;
+                        if (self.ClickEvent != null) {
+                            self.ClickEvent();
+                        }
+                    }
+                }
+                else {
+                    if (self.Pressed == true) {
+                        self.Released = true;
+                    }
+                    self.Pressed = false;
+                }
+            }
+
+            self.ClickEvent = null;
+        }
+
+        function txt(graphics, id, x, y, font, text, color) {
+            var self = this;
+            self.ID = id;
+            self.X = x;
+            self.Y = y;
+            self.Font = font;
+            self.Text = text;
+            self.Color = color;
+            self.Graphics = graphics;
+
+            self.Draw = function () {
+                self.Graphics.font = self.Font;
+                self.Graphics.fillStyle = self.Color;
+                self.Graphics.fillText(self.Text, self.X, self.Y);
+            }
+        }
+
+        function FindDistance(x1, x2, y1, y2) {
+            var dx = Math.abs(x1 - x2);
+            var dy = Math.abs(y1 - y2);
+
+            return Math.sqrt((dx * dx) + (dy * dy));
+        }
+
+        function RectangleVsCircleCollision(rx, ry, rw, rh, cx, cy, cr) {
+            var dx = Math.abs(cx - rx - rw / 2);
+            var dy = Math.abs(cy - ry - rh / 2);
+
+            if (dx > (rw / 2 + cr)) {
+                return false;
+            }
+            if (dy > (rh / 2 + cr)) {
+                return false;
+            }
+
+            if (dx <= (rw / 2)) {
+                return true;
+            }
+            if (dy <= (rh / 2)) {
+                return true;
+            }
+
+            var d2x = dx - rw / 2;
+            var d2y = dy - rh / 2;
+            return ((d2x * d2x + d2y * d2y) <= (cr * cr));
+        }
+
+        function Setup() {
+            stage = document.getElementById("stage");
+            graphics = stage.getContext("2d");
+
+            window.addEventListener("keydown", KeyDownPress);
+            window.addEventListener("keyup", KeyUpPress);
+            document.getElementById("stage").addEventListener("mousedown", ScreenClick);
+            document.getElementById("stage").addEventListener("mouseup", ScreenClickUp);
+
+            SetupMainMenu();
+
+            // startup the controller!!!
+            window.requestAnimationFrame(Controller);
+        }
+
+        function Controller() {
+            // clear the screen
+            graphics.clearRect(stageMinX, stageMinY, stageMaxX + 50, stageMaxY + 50);
+
+            // update and draw based on the game state!
+            switch (state) {
+                case 0: // main menu
+                    UpdateMainMenu();
+                    DrawMainMenu();
+                    break;
+                case 1: // game
+                    UpdateGame();
+                    DrawGame();
+                    break;
+            }
+
+            // request to be drawn again
+            window.requestAnimationFrame(Controller);
+        }
+
+        function Cleanup() {
+            // clear arrays
+            buttons = new Array();
+            txts = new Array();
+        }
+
+        function UpdateMainMenu() {
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].Update();
+
+                if (buttons[i].Released) {
+                    switch (buttons[i].ID) {
+                        case "Start":
+                            SetupGame();
+                            state = 1;
+                            break
+                    }
+                }
+            }
+
+        }
+
+        function DrawMainMenu() {
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].Draw();
+            }
+
+            for (var i = 0; i < txts.length; i++) {
+                txts[i].Draw();
+            }
+        }
+
+        function SetupMainMenu() {
+            Cleanup();
+
+            // text items
+            txts.push(new txt(graphics, "GameName", 25, 25, "32px Lucida-Sans", "Infection", "black"));
+            txts.push(new txt(graphics, "aboutme", 25, 480, "12px Tahoma", "Developed by: Christian Webber", "black"));
+            txts.push(new txt(graphics, "aboutver", 445, 480, "12px Tahoma", "v1.0.0", "black"));
+
+            // start game option
+            buttons.push(new btn(graphics, "Start", 25, 100, 75, 40, "24px Tahoma", "Start", "black", "red"))
+        }
+
+        // returns random choice between -1 and 1, multiplied by the ball speed
+        function RandomPositivity() {
+            return (Math.round(Math.random()) * 2 - 1) * ballspeed;
+        }
+
+        // returns a random direction
+        function RandomDirection() {
+            return RandomPositivity() * Math.random();
+        }
+
+        function UpdateGame() {
+        }
+
+        function DrawGame() {
+        }
+
+        function SetupGame() {
+            Cleanup();
+        }
+
+        function KeyDownPress(evt) {
+            // up
+            if (evt.keyCode == 87 || evt.keyCode == 119) {
+                keyUp = true;
+            }
+
+            // down
+            if (evt.keyCode == 83 || evt.keyCode == 115) {
+                keyDown = true;
+            }
+
+            // left
+            if (evt.keyCode == 65 || evt.keyCode == 97) {
+                keyLeft = true;
+            }
+
+            // right
+            if (evt.keyCode == 68 || evt.keyCode == 100) {
+                keyRight = true;
+            }
+        }
+
+        function KeyUpPress(evt) {
+            // up
+            if (evt.keyCode == 87 || evt.keyCode == 119) {
+                keyUp = false;
+            }
+
+            // down
+            if (evt.keyCode == 83 || evt.keyCode == 115) {
+                keyDown = false;
+            }
+
+            // left
+            if (evt.keyCode == 65 || evt.keyCode == 97) {
+                keyLeft = false;
+            }
+
+            // right
+            if (evt.keyCode == 68 || evt.keyCode == 100) {
+                keyRight = false;
+            }
+
+
+            // escape
+            if (evt.keyCode == 27) {
+                if (state == 1) {
+                    SetupMainMenu();
+                    state = 0;
+                }
+            }
+        }
+
+        function ScreenClick(evt) {
+            clickX = evt.pageX;
+            clickY = evt.pageY - 30;
+            mousepressed = true;
+        }
+
+        function ScreenClickUp(evt) {
+            clickX = evt.pageX;
+            clickY = evt.pageY;
+            mousepressed = false;
+        }
+
+    </script>
+
+</head>
+<body onload="Setup();">
+    <div id="content">
+        <canvas id="stage" width="500" height="500" style="margin-top: 30px; border-style: solid; border-width: 5px; border-color: black"></canvas>
+    </div>
+</body>
+</html>
